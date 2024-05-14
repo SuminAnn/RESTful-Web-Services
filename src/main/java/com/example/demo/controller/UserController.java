@@ -7,8 +7,9 @@ import com.example.demo.bean.User;
 import com.example.demo.dao.UserDaoService;
 import com.example.demo.exception.UserNotFoundException;
 
+import jakarta.validation.Valid;
+
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {//@valid 유효성검사
        User saveUser = service.save(user);
 
        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -57,7 +58,7 @@ public class UserController {
     }
     
     @DeleteMapping("/users/{id}")
-    public ResponseEntity deleteUser(@PathVariable int id){
+    public ResponseEntity<Object> deleteUser(@PathVariable int id){
         User deleteUser = service.deleteById(id);
 
         if(deleteUser == null){
