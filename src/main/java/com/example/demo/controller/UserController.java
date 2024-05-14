@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,4 +56,14 @@ public class UserController {
         return ResponseEntity.created(location).build(); //HTTP Status Code 제어
     }
     
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity deleteUser(@PathVariable int id){
+        User deleteUser = service.deleteById(id);
+
+        if(deleteUser == null){
+            throw new UserNotFoundException(String.format("ID[%s] not found", id));
+        }
+
+        return ResponseEntity.noContent().build();
+    }
 }
