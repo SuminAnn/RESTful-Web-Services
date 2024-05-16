@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.bean.AdminUser;
+import com.example.demo.bean.AdminUserV2;
 import com.example.demo.bean.User;
 import com.example.demo.dao.UserDaoService;
 import com.example.demo.exception.UserNotFoundException;
@@ -54,7 +55,7 @@ public class AdminUserController {
         return mapping;
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/v1/users/{id}")
     public MappingJacksonValue findUserforAdmin(@PathVariable int id) {
         User user = service.findOne(id);
 
@@ -68,6 +69,28 @@ public class AdminUserController {
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name", "joinDate", "ssn");
         FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfo", filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(adminUser);
+        mapping.setFilters(filters);
+
+        return mapping;
+    }
+
+    @GetMapping("/v2/users/{id}")
+    public MappingJacksonValue findUserforAdminV2(@PathVariable int id) {
+        User user = service.findOne(id);
+
+        AdminUserV2 adminUser = new AdminUserV2();
+
+        if(user == null){
+            throw new UserNotFoundException(String.format("ID{%s} not found", id));
+        }else{
+            BeanUtils.copyProperties(user, adminUser);
+            adminUser.setGrade("VIP"); //grade 새로운 필드 추가
+        }
+
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name", "joinDate", "grade");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfoV2", filter);
 
         MappingJacksonValue mapping = new MappingJacksonValue(adminUser);
         mapping.setFilters(filters);
