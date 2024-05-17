@@ -12,12 +12,17 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;;
 
 
 
@@ -35,14 +40,18 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public User findUser(@PathVariable int id) {
+    public EntityModel<User> findUser(@PathVariable int id) {
         User user = service.findOne(id);
 
         if(user == null){
             throw new UserNotFoundException(String.format("ID{%s} not found", id));
         }
 
-        return user;
+        EntityModel<User> entityModel = EntityModel.of(user);
+
+        WebMvcLinkBuilder linTo = linkTo(methodOn(this.getClass()).findUsers());
+        entityModel.add(linTo.withRel("all-users")); //all-users -> http://localhost:8088/users
+        return entityModel;
     }
 
     @PostMapping("/users")
