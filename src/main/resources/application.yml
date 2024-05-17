@@ -1,15 +1,20 @@
 server:
- port: 8088
+  port: 8088
 
 spring:
- messages:
-  basename: messages
+  messages:
+    basename: messages
+  # security:
+  #   user:
+  #     name: username
+  #     password: passw0rd
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+
 
 #logging:
 #  level:
