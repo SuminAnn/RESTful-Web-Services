@@ -5,6 +5,12 @@ spring:
  messages:
   basename: messages
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 #logging:
 #  level:
 #    org:
