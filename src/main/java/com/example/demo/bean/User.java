@@ -2,21 +2,32 @@ package com.example.demo.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.*;
 
 //import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"password", "ssn"})
 @Schema(description = "사용자 상세 정보를 위한 도메인 객체")
+@Entity //클래스 이름에 해당하는 데이터 베이스 테이블이 생성되는 어노테이션
+@Table(name = "users") //테이블 명을 직접 명시
 public class User {
     @Schema(title = "사용자 고유 ID", description = "사용자 ID는 자동 생성됩니다")
+    @Id
+    @GeneratedValue
     private Integer id;
 
     @Schema(title = "사용자 이름", description = "사용자 이름을 입력합니다")
@@ -35,3 +46,22 @@ public class User {
     @Schema(title = "사용자 주민번호", description = "사용자 주민번호를 입력합니다")
     private String ssn;
 }
+
+/*
+ * ORM
+ *  - 객체를 관계형 데이터베이스 데이터와 자동으로 맵핑
+ * 
+ * JPA
+ *  - 자바 ORM 기술에 대한 API 표준 명세
+ *  - 자바 어플리케이션에서 관계형 데이터베이스를 사용하는 방식을 정의한 인터페이스
+ *  - EntityManager를 통해 CRUD 처리
+ * 
+ * Hibernate
+ *  - 객체 관계 맵핑 프레임워크
+ *  - JPA의 구현체, 인터페이스를 직접 구현한 라이브러리
+ *  - 생산성, 유지보수, 비종속성
+ * 
+ * Spring Data JPA
+ *  - Spring Module
+ *  - JPA를 추상화한 Repository 인터페이스 제공
+ */
