@@ -20,7 +20,8 @@ import jakarta.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(value = {"password", "ssn"})
+// @JsonIgnoreProperties(value = {"password", "ssn"})
+@JsonIgnoreProperties(value = {"id"})
 @Schema(description = "사용자 상세 정보를 위한 도메인 객체")
 @Entity //클래스 이름에 해당하는 데이터 베이스 테이블이 생성되는 어노테이션
 @Table(name = "users") //테이블 명을 직접 명시
