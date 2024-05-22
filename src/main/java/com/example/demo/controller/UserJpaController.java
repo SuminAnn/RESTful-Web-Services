@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.example.demo.bean.Post;
 import com.example.demo.bean.User;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserRepository;
 import java.net.URI;
 
@@ -22,6 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 ;
 
 @RestController
@@ -29,9 +32,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserJpaController {
 
     private UserRepository userRepository;
+    private PostRepository postRepository;
 
-    public UserJpaController(UserRepository userRepository){
+    public UserJpaController(UserRepository userRepository, PostRepository postRepository){
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     //전체 사용자 조회 /jpa/users
@@ -75,5 +80,40 @@ public class UserJpaController {
         
         return ResponseEntity.created(location).build();
     }
+
+    @GetMapping("/users/{id}/posts")
+    public List<Post> findPosts(@PathVariable int id) {
+        Optional<User> user = userRepository.findById(id);
+
+        if(!user.isPresent()){
+            throw new UserNotFoundException("id: " + id);
+        }
+
+        return user.get().getPosts();
+    }
+    
+    @PostMapping("/users/{id}/posts")
+    public ResponseEntity createPost(@PathVariable int id, @RequestBody Post post) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if(!userOptional.isPresent()){
+            throw new UserNotFoundException("id: " + id);
+        }
+
+        User user = userOptional.get();
+
+        post.setUser(user);
+
+        postRepository.save(post);
+        
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(post.getId())
+                .toUri();
+        
+        return ResponseEntity.created(location).build();
+    }
+    
     
 }
