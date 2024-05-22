@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
@@ -46,6 +47,20 @@ public class User {
    // @JsonIgnore //직렬화 또는 역질렬화 할때 해당 필드는 무시된다
     @Schema(title = "사용자 주민번호", description = "사용자 주민번호를 입력합니다")
     private String ssn;
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
+
+    public User(Integer id, @Size(min = 2, message = "Name은 2글자 이상 입력해 주세요") String name,
+            @Past(message = "등록일은 미래 날짜를 입력하실 수 없습니다") Date joinDate, String password, String ssn) {
+        this.id = id;
+        this.name = name;
+        this.joinDate = joinDate;
+        this.password = password;
+        this.ssn = ssn;
+    }
+
+    
 }
 
 /*
